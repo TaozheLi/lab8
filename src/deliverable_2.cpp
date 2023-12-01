@@ -49,10 +49,19 @@ using ProjectionFactor = gtsam::GenericProjectionFactor<gtsam::Pose3, gtsam::Poi
 // TODO Implement me!
 // ~~~~ begin solution
 //
+void parseBoundingBoxCallback(const darknet_ros_msgs::BoundingBoxes &boxes, cv::Point2f &centroid){
+  size_t  n = boxes.bounding_boxes.size();
+  for(const auto & box: boxes.bounding_boxes){
+    if(box.Class == "teddy bear"){
+      centroid = findCentroid(box);
+    }
+  }
+}
 //     **** FILL IN HERE ***
 //
 // ~~~~ end solution
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
@@ -71,11 +80,12 @@ int main(int argc, char** argv) {
   ros::Publisher gt_pose_array_pub =
       local_nh.advertise<geometry_msgs::PoseArray>("/gt_trajectory", 10,
                                                    true);
-
+  
+  ros::Subscriber boxParser = local_nn.subscribe("/darknet_ros/bounding_boxes", 10, parseBoundingBoxCallback);
   // (TODO) You will need to setup a gtsam factor graph that grows every time there is a new image.
   // You may want to design a new class to help manage the callback(s) involved -- see earlier labs for examples.
   // But, feel free to do it however you want: add your own static variables, functions, classes, etc.
-
+  NonlinearFactorGraph graph; 
   // (HINT) See helper_functions.hpp -- the inputs, outputs, and documentation of the helper functions may provide guidance if you get stuck
 
   // (TODO) You will probably want to construct an image_transport::ImageTransport object somewhere,
