@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
   ros::Publisher gt_pose_array_pub =
       local_nh.advertise<geometry_msgs::PoseArray>("/gt_trajectory", 10,
                                                    true);
-  cv::Point2f &centroid;
+  cv::Point2f centroid;
   darknet_ros_msgs::BoundingBoxes boxes;
   ros::Subscriber boxParser = local_nh.subscribe("/darknet_ros/bounding_boxes", 10, &parseBoundingBoxCallback, &boxes, &centroid);
   // (TODO) You will need to setup a gtsam factor graph that grows every time there is a new image.
